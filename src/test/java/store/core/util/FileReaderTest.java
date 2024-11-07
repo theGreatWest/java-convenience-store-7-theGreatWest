@@ -1,4 +1,4 @@
-package store.util;
+package store.core.util;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -8,7 +8,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 
-import store.constant.ExceptionMessage;
+import store.core.constant.ExceptionMessage;
+import store.core.util.FileReader;
 
 public class FileReaderTest {
     @DisplayName("products.md 파일의 확장자 유무와 상관 없이, 입력된 파일명이 resources 목록에 존재한다면 피일의 정보를 읽어올 수 있다.")

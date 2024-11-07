@@ -1,7 +1,7 @@
-package store.util;
+package store.core.util;
 
-import store.constant.ExceptionMessage;
-import store.constant.FilePath;
+import store.core.constant.ExceptionMessage;
+import store.core.constant.FilePath;
 
 import java.io.*;
 import java.nio.file.*;
@@ -14,10 +14,10 @@ public class FileReader {
 
     public static List<String> getInformation(String fileName) {
         List<String> information;
-
         try {
             information = Files.readAllLines(Paths.get(getFilePath(fileName)));
             skipFirstLine(information);
+            removeEmptyValue(information);
         } catch (IllegalStateException | IOException e) {
             throw new IllegalStateException(ExceptionMessage.FILE_READER_IO_EXCEPTION.errorNotification());
         }
@@ -27,6 +27,10 @@ public class FileReader {
 
     private static void skipFirstLine(List<String> information) {
         information.removeFirst();
+    }
+
+    private static void removeEmptyValue(List<String> information) {
+        information.removeIf(value -> value.strip().isBlank());
     }
 
     private static String getFilePath(String fileName) {
