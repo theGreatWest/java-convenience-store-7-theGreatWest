@@ -12,7 +12,7 @@ public class PromotionsRepository {
         this.promotions = promotions;
     }
 
-    public List<Promotion> getPromotions() {
+    public List<Promotion> allPromotions() {
         return promotions;
     }
 }
