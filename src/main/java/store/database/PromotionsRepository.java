@@ -1,5 +1,6 @@
 package store.database;
 
+import store.model.domain.Product;
 import store.model.domain.Promotion;
 
 import java.util.List;
@@ -9,5 +10,9 @@ public class PromotionsRepository {
 
     public PromotionsRepository(List<Promotion> promotions) {
         this.promotions = promotions;
+    }
+
+    public List<Promotion> getPromotions() {
+        return promotions;
     }
 }

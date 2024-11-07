@@ -10,4 +10,8 @@ public class ProductsRepository {
     public ProductsRepository(List<Product> products) {
         this.products = products;
     }
+
+    public List<Product> getProducts() {
+        return products;
+    }
 }

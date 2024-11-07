@@ -1,4 +1,4 @@
-package store.constant;
+package store.core.constant;
 
 public enum FilePath {
     PRODUCTS("/src/main/resources/products.md", "products"),
