@@ -11,10 +11,10 @@ import java.util.List;
 import store.constant.ExceptionMessage;
 
 public class FileReaderTest {
-    @DisplayName("products.md 파일의 확장자 유무와 상관 없이 파일명이 맞다면 피일의 정보를 읽어올 수 있다.")
+    @DisplayName("products.md 파일의 확장자 유무와 상관 없이, 입력된 파일명이 resources 목록에 존재한다면 피일의 정보를 읽어올 수 있다.")
     @ParameterizedTest
-    @ValueSource(strings = {"products", "products.md"})
-    void 재고_솽황_정보_불러오기(String fileName) {
+    @ValueSource(strings = {"products", "products.md", "products.mt"})
+    void 재고_상황_정보_불러오기(String fileName) {
         List<String> productsInformation = FileReader.getInformation(fileName);
         assertThat(productsInformation).contains(
                 "콜라,1000,10,탄산2+1",
@@ -36,9 +36,9 @@ public class FileReaderTest {
         );
     }
 
-    @DisplayName("promotions.md 파일의 확장자 유무와 상관 없이 파일명이 맞다면 피일의 정보를 읽어올 수 있다.")
+    @DisplayName("promotions.md 파일의 확장자 유무와 상관 없이, 입력된 파일명이 resources 목록에 존재한다면 피일의 정보를 읽어올 수 있다.")
     @ParameterizedTest
-    @ValueSource(strings = {"promotions", "promotions.md"})
+    @ValueSource(strings = {"promotions", "promotions.md", "promotions.mt"})
     void 할인_혜택_정보_불러오기(String fileName) {
         List<String> promotionsInformation = FileReader.getInformation(fileName);
         assertThat(promotionsInformation).contains(
@@ -50,11 +50,11 @@ public class FileReaderTest {
 
     @DisplayName("파일명이 틀리면 예외가 발생한다.")
     @ParameterizedTest
-    @ValueSource(strings = {"prom", "promotions.mt", "hello.md", "convenience-store-7"})
+    @ValueSource(strings = {"prom", "hello.md", "convenience-store-7.md"})
     void 파일명_입력_오류_예외_테스트(String fileName) {
         assertThatThrownBy(() -> FileReader.getInformation(fileName))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining(ExceptionMessage.ERROR.getExceptionMessage());
+                .hasMessageContaining(ExceptionMessage.ERROR.getMessage());
 
     }
 }
