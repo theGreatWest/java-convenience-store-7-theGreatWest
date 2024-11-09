@@ -5,9 +5,8 @@ import store.core.constant.ExceptionMessage;
 
 public class InputView {
     public String readProducts() {
-        String requestProductQuantity;
         try {
-            requestProductQuantity = Console.readLine().strip();
+            String requestProductQuantity = Console.readLine().strip();
 
             return requestProductQuantity;
         } catch (RuntimeException e) {
