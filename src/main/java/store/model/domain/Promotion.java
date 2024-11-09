@@ -22,7 +22,7 @@ public class Promotion {
 
             return;
         }
-        throw new IllegalStateException(name);
+        throw new IllegalStateException();
     }
 
     private boolean validateExpiration(String startDate, String endDate) {

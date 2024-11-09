@@ -1,6 +1,5 @@
 package store.database;
 
-import store.model.domain.Product;
 import store.model.domain.Promotion;
 
 import java.util.List;
@@ -12,7 +11,7 @@ public class PromotionsRepository {
         this.promotions = promotions;
     }
 
-    public List<Promotion> allPromotions() {
+    public List<Promotion> readAllPromotions() {
         return promotions;
     }
 }

@@ -11,7 +11,7 @@ public class ProductsRepository {
         this.products = products;
     }
 
-    public List<Product> allProducts() {
+    public List<Product> readAllProducts() {
         return products;
     }
 }
