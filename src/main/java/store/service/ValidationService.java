@@ -11,7 +11,8 @@ public class ValidationService {
     private List<Product> allProducts;
     private List<String> allProductsName;
 
-    public ValidationService() { }
+    public ValidationService() {
+    }
 
     public ValidationService(List<Product> allProducts, List<String> allProductsName) {
         this.allProducts = allProducts;
@@ -130,12 +131,13 @@ public class ValidationService {
     }
 
     private void isNotYesNo(String answer) {
-        if (!(answer.equalsIgnoreCase("Y") || answer.equalsIgnoreCase("n"))) {
+        if (!(answer.equalsIgnoreCase("Y") || answer.equalsIgnoreCase("Yes")
+                || answer.equalsIgnoreCase("no") || answer.equalsIgnoreCase("n"))) {
             throw new RuntimeException();
         }
     }
 
     private boolean convertAnswer(String answer) {
-        return answer.equalsIgnoreCase("Y");
+        return answer.equalsIgnoreCase("Y") || answer.equalsIgnoreCase("yes");
     }
 }
