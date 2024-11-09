@@ -1,7 +1,13 @@
 package store;
 
+import store.controller.ApplicationController;
+import store.core.config.ApplicationConfig;
+
 public class Application {
     public static void main(String[] args) {
-        // TODO: 프로그램 구현
+        ApplicationConfig appConfig = new ApplicationConfig();
+        ApplicationController appController = appConfig.appController();
+
+        appController.run();
     }
 }
