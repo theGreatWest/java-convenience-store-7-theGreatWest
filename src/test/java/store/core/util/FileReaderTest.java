@@ -9,7 +9,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.List;
 
 import store.core.constant.ExceptionMessage;
-import store.core.util.FileReader;
 
 public class FileReaderTest {
     @DisplayName("products.md 파일의 확장자 유무와 상관 없이, 입력된 파일명이 resources 목록에 존재한다면 피일의 정보를 읽어올 수 있다.")
@@ -24,7 +23,7 @@ public class FileReaderTest {
                 "사이다,1000,7,null",
                 "오렌지주스,1800,9,MD추천상품",
                 "탄산수,1200,5,탄산2+1",
-                "물,500,10,null",
+                "물,500,11,null",
                 "비타민워터,1500,6,null",
                 "감자칩,1500,5,반짝할인",
                 "감자칩,1500,5,null",
