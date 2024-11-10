@@ -14,8 +14,6 @@ public class ApplicationController {
     private final ApplicationService appService;
     private final InputView inputView;
     private final OutputView outputView;
-    private final int MAX_RETRY = 10;
-    private final int retryCount = 0;
 
     public ApplicationController(ApplicationService appService) {
         this.appService = appService;

@@ -35,6 +35,6 @@ public class OutputView {
     }
 
     public void printReceipt(String receipt) {
-        System.out.println(receipt);
+        System.out.println(Constants.NEW_LINE + receipt);
     }
 }

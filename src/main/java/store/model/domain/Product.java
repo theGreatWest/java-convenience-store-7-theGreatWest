@@ -83,7 +83,7 @@ public class Product {
     }
 
     private String checkPromotionMessage() {
-        if (quantity == 0 || promotion.equalsIgnoreCase(Constants.NULL)) {
+        if (promotion.equalsIgnoreCase(Constants.NULL)) {
             return Constants.SPACE;
         }
         return promotion;
