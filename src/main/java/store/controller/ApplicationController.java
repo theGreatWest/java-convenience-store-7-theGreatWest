@@ -1,7 +1,6 @@
 package store.controller;
 
 import store.model.domain.PaymentResult;
-import store.model.domain.Product;
 import store.model.domain.UserRequest;
 import store.model.dto.*;
 import store.service.ApplicationService;
@@ -15,6 +14,8 @@ public class ApplicationController {
     private final ApplicationService appService;
     private final InputView inputView;
     private final OutputView outputView;
+    private final int MAX_RETRY = 10;
+    private final int retryCount = 0;
 
     public ApplicationController(ApplicationService appService) {
         this.appService = appService;
@@ -30,7 +31,7 @@ public class ApplicationController {
                 outputView.printReceipt(createReceipt(promptMembership(), finalPaymentResults));
                 if (!promptInquireAnotherProducts()) { break; }
             } catch (IllegalArgumentException e) {
-                outputView.printExceptionMessage(e.getMessage());
+                return;
             }
         }
     }
@@ -47,10 +48,10 @@ public class ApplicationController {
             outputView.productNameQuantityPrompt();
             try {
                 String userRequestProductsQuantity = appService.checkEmptyRequest(inputView.readProducts());
-
                 return appService.parseUserRequestProductsNameQuantity(userRequestProductsQuantity);
             } catch (IllegalArgumentException e) {
                 outputView.printExceptionMessage(e.getMessage());
+                throw new IllegalArgumentException(e.getMessage());
             }
         }
     }
@@ -76,6 +77,7 @@ public class ApplicationController {
                 return appService.savedYesNoResult(inputView.readYesNo());
             } catch (IllegalArgumentException e) {
                 outputView.printExceptionMessage(e.getMessage());
+                throw new IllegalArgumentException(e.getMessage());
             }
         }
     }
@@ -99,6 +101,7 @@ public class ApplicationController {
                 return appService.savedYesNoResult(inputView.readYesNo());
             } catch (IllegalArgumentException e) {
                 outputView.printExceptionMessage(e.getMessage());
+                throw new IllegalArgumentException(e.getMessage());
             }
         }
     }
@@ -121,6 +124,7 @@ public class ApplicationController {
                 return appService.savedYesNoResult(inputView.readYesNo());
             } catch (IllegalArgumentException e) {
                 outputView.printExceptionMessage(e.getMessage());
+                throw new IllegalArgumentException(e.getMessage());
             }
         }
     }
@@ -132,6 +136,7 @@ public class ApplicationController {
                 return appService.savedYesNoResult(inputView.readYesNo());
             } catch (IllegalArgumentException e) {
                 outputView.printExceptionMessage(e.getMessage());
+                throw new IllegalArgumentException(e.getMessage());
             }
         }
     }
