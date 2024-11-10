@@ -137,6 +137,7 @@ public class ApplicationService {
 
     public PaymentResult nonPromotionProductsPayment(PaymentResult paymentResult) {
         Product product = dbService.searchProductNonPromotion(paymentResult.getUserRequestProductName());
+
         dbService.updateStock(paymentResult.getUserRequestProductName(), false, false, paymentResult.getRemainQuantity());
         paymentResult.addPayment(paymentResult.getRemainQuantity() * product.getPrice(), paymentResult.getRemainQuantity());
 
@@ -145,9 +146,11 @@ public class ApplicationService {
 
     public PaymentResult standardPayment(UserRequest userRequest) {
         Product product = dbService.searchProductNonPromotion(userRequest.getProductName());
+        boolean promotion = false;
+        if(dbService.hasPromotion(userRequest.getProductName()) != null) { promotion = true; }
 
         int price = userRequest.getQuantity() * product.getPrice();
-        dbService.updateStock(userRequest.getProductName(), false, false, userRequest.getQuantity());
+        dbService.updateStock(userRequest.getProductName(), promotion, false, userRequest.getQuantity());
 
         return new PaymentResult(userRequest.getProductName(), product.getPrice(), userRequest.getQuantity(), price, 0, 0, 0, userRequest.getQuantity());
     }

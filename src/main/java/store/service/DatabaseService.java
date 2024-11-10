@@ -37,16 +37,17 @@ public class DatabaseService {
         return allProductsName;
     }
 
-    public void updatePromotions(){
-        for(Promotion promotion : promotionsRepository.readAllPromotions()){
-            if(!promotion.isOngoingPromotion()){
-                promotionsRepository.removeExpiredPromotions(promotion.getName());
-            }
-        }
-    }
+// 프로모션 정보를 최신으로 유지하는 기능
+//    public void updatePromotions(){
+//        for(Promotion promotion : promotionsRepository.readAllPromotions()){
+//            if(!promotion.isOngoingPromotion()){
+//                promotionsRepository.removeExpiredPromotions(promotion.getName());
+//            }
+//        }
+//    }
 
     public Promotion searchPromotion(String promotionName){
-        updatePromotions();
+//        updatePromotions();
 
         for(Promotion promotion : promotionsRepository.readAllPromotions()){
             if(promotion.getName().equalsIgnoreCase(promotionName)){
@@ -106,6 +107,15 @@ public class DatabaseService {
                 return;
             }
         }
+    }
+
+    public Product hasPromotion(String productName){
+        for(Product product : searchProducts(productName)){
+            if(product.getName().equalsIgnoreCase(productName) && !product.getPromotion().equalsIgnoreCase(Constants.NULL)){
+                return product;
+            }
+        }
+        return null;
     }
 
 }
