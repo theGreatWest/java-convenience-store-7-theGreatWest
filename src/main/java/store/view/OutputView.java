@@ -26,7 +26,15 @@ public class OutputView {
         System.out.println(exceptionMessage);
     }
 
-    public void printReceipt() {
+    public void printConfirmNonDiscountProductsPrompt(String productName, int insufficientQuantity){
+        System.out.println(Constants.NEW_LINE + Constants.CURRENT + productName+Constants.SPACE+insufficientQuantity+Constants.PURCHASE_WITHOUT_DISCOUNT_YES_NO);
+    }
 
+    public void printConfirmAddProductPromotionPrompt(String productName, int additionalQuantity){
+        System.out.println(Constants.NEW_LINE + Constants.CURRENT + productName+Constants.SUBJECT_MARKER+additionalQuantity+Constants.FREE_ITEM_GUIDE_YES_NO);
+    }
+
+    public void printReceipt(String receipt) {
+        System.out.println(receipt);
     }
 }

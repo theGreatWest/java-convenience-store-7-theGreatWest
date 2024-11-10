@@ -48,6 +48,7 @@ public class ValidationService {
     }
 
     private String isEnclosedBrackets(String productNameQuantity) {
+        productNameQuantity = productNameQuantity.strip();
         if (!(productNameQuantity.startsWith("[") && productNameQuantity.endsWith("]"))) {
             throw new IllegalArgumentException(ExceptionMessage.FORMAT_EXCEPTION.errorNotification());
         }

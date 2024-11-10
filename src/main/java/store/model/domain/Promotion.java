@@ -2,6 +2,8 @@ package store.model.domain;
 
 import store.core.util.Date;
 
+import java.util.List;
+
 public class Promotion {
     public static final String NEW_LINE = "\n";
     public static final String SLASH = " / ";
@@ -23,6 +25,26 @@ public class Promotion {
             return;
         }
         throw new IllegalStateException();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public boolean isOngoingPromotion() {
+        return Date.isDateInRange(startDate, endDate);
+    }
+
+    public List<Integer> getPurchaseNumberGiftNumber() {
+        return List.of(purchaseNumber, giftNumber);
+    }
+
+    public int getPurchaseNumber() {
+        return purchaseNumber;
+    }
+
+    public int getGiftNumber() {
+        return giftNumber;
     }
 
     private boolean validateExpiration(String startDate, String endDate) {

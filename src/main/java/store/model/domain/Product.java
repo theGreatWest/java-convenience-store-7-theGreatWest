@@ -21,6 +21,14 @@ public class Product {
         throw new IllegalStateException();
     }
 
+    public void changeQuantity(boolean request, int quantity) {
+        if (request) {
+            this.quantity += quantity;
+            return;
+        }
+        this.quantity -= quantity;
+    }
+
     private boolean validateStringToInteger(String price, String quantity) {
         try {
             Integer.parseInt(price);
@@ -36,12 +44,12 @@ public class Product {
         return name;
     }
 
-    public int getPrice() {
-        return price;
-    }
-
     public int getQuantity() {
         return quantity;
+    }
+
+    public int getPrice() {
+        return price;
     }
 
     public String getPromotion() {
@@ -50,10 +58,10 @@ public class Product {
 
     @Override
     public String toString() {
-        return Constants.HYPHEN + name + store.core.constant.Constants.SPACE
-                + formatPriceWithComma() + store.core.constant.Constants.WON + store.core.constant.Constants.SPACE
-                + checkStockMessage() + store.core.constant.Constants.SPACE
-                + checkPromotionMessage() + store.core.constant.Constants.NEW_LINE;
+        return Constants.HYPHEN + name + Constants.SPACE
+                + formatPriceWithComma() + Constants.WON + Constants.SPACE
+                + checkStockMessage() + Constants.SPACE
+                + checkPromotionMessage() + Constants.NEW_LINE;
     }
 
     private String formatPriceWithComma() {
@@ -62,7 +70,7 @@ public class Product {
         for (int i = 1; i <= reversedPrice.length(); i++) {
             processedPrice.append(reversedPrice.charAt(i - 1));
             if (i != reversedPrice.length() && i % 3 == 0) {
-                processedPrice.append(store.core.constant.Constants.COMMA);
+                processedPrice.append(Constants.COMMA);
             }
         }
 
@@ -71,14 +79,14 @@ public class Product {
 
     private String checkStockMessage() {
         if (quantity==0) {
-            return store.core.constant.Constants.NO_STOCK;
+            return Constants.NO_STOCK;
         }
-        return quantity + store.core.constant.Constants.UNIT_ITEM;
+        return quantity + Constants.UNIT_ITEM;
     }
 
     private String checkPromotionMessage() {
-        if (quantity == 0 || promotion.equalsIgnoreCase(store.core.constant.Constants.NULL)) {
-            return store.core.constant.Constants.SPACE;
+        if (quantity == 0 || promotion.equalsIgnoreCase(Constants.NULL)) {
+            return Constants.SPACE;
         }
         return promotion;
     }

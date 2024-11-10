@@ -14,4 +14,9 @@ public class ProductsRepository {
     public List<Product> readAllProducts() {
         return products;
     }
+
+    public void updateStock(Product product, boolean request, int quantity){
+        int index = this.products.indexOf(product);
+        this.products.get(index).changeQuantity(request, quantity);
+    }
 }

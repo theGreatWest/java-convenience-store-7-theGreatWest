@@ -14,4 +14,8 @@ public class PromotionsRepository {
     public List<Promotion> readAllPromotions() {
         return promotions;
     }
+
+    public void removeExpiredPromotions(String promotionName){
+        promotions.removeIf(promotion -> promotion.getName().equalsIgnoreCase(promotionName));
+    }
 }
