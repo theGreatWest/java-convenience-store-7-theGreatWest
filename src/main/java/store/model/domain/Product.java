@@ -2,8 +2,6 @@ package store.model.domain;
 
 import store.core.constant.Constants;
 
-import java.util.List;
-
 public class Product {
     private String name;
     private int price;

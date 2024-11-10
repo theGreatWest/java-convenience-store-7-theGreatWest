@@ -67,27 +67,6 @@ public class ApplicationService {
         }
     }
 
-
-    public StockClassifiedPromotionDTO stockClassifiedBasedPromotion(UserRequestsDTO allUserRequests) {
-        List<Product> promotionEligibleProducts = new ArrayList<>();
-        List<Product> promotionIneligibleProducts = new ArrayList<>();
-
-        for (UserRequest userRequest : allUserRequests.getUserRequests()) {
-            for (Product product : dbService.searchProducts(userRequest.getProductName())) {
-                classifyStocks(promotionEligibleProducts, promotionIneligibleProducts, product);
-            }
-        }
-        return new StockClassifiedPromotionDTO(promotionEligibleProducts, promotionIneligibleProducts);
-    }
-
-    public void classifyStocks(List<Product> promotionEligibleProducts, List<Product> promotionIneligibleProducts, Product product) {
-        if (!product.getPromotion().equalsIgnoreCase(Constants.NULL)) {
-            promotionEligibleProducts.add(product);
-            return;
-        }
-        promotionIneligibleProducts.add(product);
-    }
-
     public UserRequestClassifiedPromotionDTO userRequestClassifiedBasedPromotion(UserRequestsDTO allUserRequests) {
         List<UserRequest> promotionEligibleRequests = new ArrayList<>();
         List<UserRequest> promotionIneligibleRequests = new ArrayList<>();
@@ -104,7 +83,7 @@ public class ApplicationService {
     public boolean classifyUserRequests(UserRequest userRequest) {
         boolean result = false;
         for (Product product : dbService.searchProducts(userRequest.getProductName())) {
-            if (!product.getPromotion().equalsIgnoreCase(Constants.NULL)) {
+            if (!product.getPromotion().equalsIgnoreCase(Constants.NULL) && (dbService.searchPromotion(product.getPromotion())!=null)) {
                 result = true;
                 break;
             }
