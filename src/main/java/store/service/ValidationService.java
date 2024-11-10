@@ -132,13 +132,12 @@ public class ValidationService {
     }
 
     private void isNotYesNo(String answer) {
-        if (!(answer.equalsIgnoreCase("Y") || answer.equalsIgnoreCase("Yes")
-                || answer.equalsIgnoreCase("no") || answer.equalsIgnoreCase("n"))) {
+        if (!(answer.equals("Y") || answer.equals("N"))) {
             throw new RuntimeException();
         }
     }
 
     private boolean convertAnswer(String answer) {
-        return answer.equalsIgnoreCase("Y") || answer.equalsIgnoreCase("yes");
+        return answer.equals("Y");
     }
 }
