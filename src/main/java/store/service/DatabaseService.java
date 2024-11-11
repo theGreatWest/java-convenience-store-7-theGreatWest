@@ -109,13 +109,4 @@ public class DatabaseService {
         }
     }
 
-    public Product hasPromotion(String productName){
-        for(Product product : searchProducts(productName)){
-            if(product.getName().equalsIgnoreCase(productName) && !product.getPromotion().equalsIgnoreCase(Constants.NULL)){
-                return product;
-            }
-        }
-        return null;
-    }
-
 }

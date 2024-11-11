@@ -48,7 +48,7 @@ public class ApplicationServiceTest {
         assertSimpleTest(() -> {
             List<String[]> result = appService.parseUserRequestProductsNameQuantity(userRequest);
             System.out.println(result);
-            assertThat(result).contains();
+            assertThat(result.size()).isEqualTo(2);
         });
     }
 

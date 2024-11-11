@@ -36,7 +36,7 @@ public class ValidationService {
 
             return convertAnswer(inputValue);
         } catch (RuntimeException e) {
-            throw new IllegalArgumentException(ExceptionMessage.OTHER_INPUT_EXCEPTION.errorNotification());
+            throw new IllegalArgumentException(ExceptionMessage.FORMAT_EXCEPTION.errorNotification());
         }
     }
 
@@ -58,8 +58,8 @@ public class ValidationService {
     private String[] isValidProductNameQuantity(String[] parsedProductNameQuantity) {
         try {
             isValidInputCount(parsedProductNameQuantity.length);
-            String productName = isProductExist(parsedProductNameQuantity[Constants.PRODUCT_NAME_INDEX].strip());
             String productQuantity = isValidQuantity(parsedProductNameQuantity[Constants.PRODUCT_QUANTITY_INDEX].strip());
+            String productName = isProductExist(parsedProductNameQuantity[Constants.PRODUCT_NAME_INDEX].strip());
 
             return isUserRequestQuantityAvailable(productName, productQuantity);
         } catch (IllegalArgumentException e) {
@@ -95,7 +95,6 @@ public class ValidationService {
     private String[] isUserRequestQuantityAvailable(String userInputProductName, String userInputProductQuantity) {
         List<Product> userRequestProducts = searchProducts(userInputProductName);
         try {
-            isEmpty(userRequestProducts);
             isStockAvailable(userRequestProducts, Integer.parseInt(userInputProductQuantity));
 
             return new String[]{userInputProductName, userInputProductQuantity};
@@ -114,12 +113,6 @@ public class ValidationService {
         return products;
     }
 
-    private void isEmpty(List<Product> products) {
-        if (products.isEmpty()) {
-            throw new IllegalArgumentException(ExceptionMessage.NON_EXISTENT_EXCEPTION.errorNotification());
-        }
-    }
-
     private void isStockAvailable(List<Product> products, int userRequestQuantity) {
         int stock = 0;
         for (Product product : products) {
@@ -132,12 +125,12 @@ public class ValidationService {
     }
 
     private void isNotYesNo(String answer) {
-        if (!(answer.equals("Y") || answer.equals("N"))) {
+        if (!(answer.equalsIgnoreCase("Y") || answer.equalsIgnoreCase("N"))) {
             throw new RuntimeException();
         }
     }
 
     private boolean convertAnswer(String answer) {
-        return answer.equals("Y");
+        return answer.equalsIgnoreCase("Y");
     }
 }

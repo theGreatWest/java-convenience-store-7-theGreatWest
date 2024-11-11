@@ -32,7 +32,7 @@ public class ApplicationService {
     public List<String[]> parseUserRequestProductsNameQuantity(String userRequestProductQuantity) {
         validationService = new ValidationService(dbService.readAllProducts(), dbService.readAllProductsName());
         List<String[]> userRequests = new ArrayList<>();
-        for (String userRequestProduct : userRequestProductQuantity.split(Constants.COMMA)) {
+        for (String userRequestProduct : Arrays.stream(userRequestProductQuantity.split(Constants.COMMA)).filter(s -> !s.isBlank()).toArray(String[]::new)) {
             try {
                 userRequests.add(validationService.startProductValidation(userRequestProduct));
             } catch (IllegalArgumentException e) {
@@ -148,14 +148,9 @@ public class ApplicationService {
 
     public PaymentResult standardPayment(UserRequest userRequest) {
         Product product = dbService.searchProductNonPromotion(userRequest.getProductName());
-        int quantity = userRequest.getQuantity();
-        Product sampleProduct = dbService.hasPromotion(userRequest.getProductName());
-        if (sampleProduct != null && sampleProduct.getQuantity() != 0) {
-            if (quantity > sampleProduct.getQuantity()) { quantity -= sampleProduct.getQuantity(); }
-            dbService.updateStock(userRequest.getProductName(), true, false, sampleProduct.getQuantity());
-        }
         int price = userRequest.getQuantity() * product.getPrice();
-        dbService.updateStock(userRequest.getProductName(), false, false, quantity);
+        dbService.updateStock(userRequest.getProductName(), false, false, userRequest.getQuantity());
+
         return new PaymentResult(userRequest.getProductName(), product.getPrice(), userRequest.getQuantity(), price, 0, 0, 0, userRequest.getQuantity());
     }
 
