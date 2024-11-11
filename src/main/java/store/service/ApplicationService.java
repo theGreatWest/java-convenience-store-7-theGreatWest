@@ -116,7 +116,6 @@ public class ApplicationService {
         int applicableBundle = userRequest.getQuantity() / totalBuyGet;
         int totalPrice = (userRequest.getQuantity() - (applicableBundle * productInfo.getGiftNumber())) * productInfo.getPrice();
         int promotionDiscount = applicableBundle * productInfo.getGiftNumber() * productInfo.getPrice();
-        System.out.println(productInfo.getName()+"--> "+productInfo.getPrice());
 
         dbService.updateStock(userRequest.getProductName(), true, false, userRequest.getQuantity());
 
@@ -140,7 +139,6 @@ public class ApplicationService {
         Product product = dbService.searchProductApplicablePromotion(paymentResult.getUserRequestProductName());
 
         dbService.updateStock(paymentResult.getUserRequestProductName(), true, false, paymentResult.getRemainQuantity());
-        System.out.println(product.getName()+"-->"+product.getPrice());
         paymentResult.addPayment(paymentResult.getRemainQuantity() * product.getPrice(), paymentResult.getRemainQuantity());
 
         return paymentResult;
@@ -158,11 +156,14 @@ public class ApplicationService {
     }
 
     public int countMembershipDiscount(List<PaymentResult> paymentResults) {
-        int nonPromotionAmount = 0;
+        int nonPromotionAmount = 0, totalPrice = 0;
         for (PaymentResult paymentResult : paymentResults) {
+            totalPrice += paymentResult.getTotalPrice();
             nonPromotionAmount += paymentResult.getNonPromotionNumber() * paymentResult.getProductPrice();
         }
-        return Math.min((nonPromotionAmount / 10 * 3), 8000);
+        int membershipDiscount = nonPromotionAmount / 10 * 3;
+        if(membershipDiscount > totalPrice) { membershipDiscount = totalPrice; }
+        return Math.min(membershipDiscount, 8000);
     }
 
     public String createReceipt(int membershipDiscount, List<PaymentResult> paymentResults) {

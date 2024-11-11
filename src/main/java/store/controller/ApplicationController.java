@@ -57,7 +57,6 @@ public class ApplicationController {
     public List<PaymentResult> promptPromotionalPayment(List<UserRequest> userRequests) {
         List<PaymentResult> paymentResults = new ArrayList<>();
         for (UserRequest userRequest : userRequests) {
-            System.out.println(userRequest.getProductName()+"-->1"+userRequest.getQuantity());
             ProductDetailsDTO productDetails = appService.productAllInfo(userRequest);
             if (userRequest.getQuantity() > productDetails.getQuantity()) {
                 paymentResults.add(processInsufficientStock(userRequest));
@@ -84,7 +83,6 @@ public class ApplicationController {
     public List<PaymentResult> productsPayment(List<PaymentResult> paymentResults, List<UserRequest> userRequests){
         List<PaymentResult> finishPaymentResults = new ArrayList<>();
         for(PaymentResult paymentResult : paymentResults){
-            System.out.println("프로모션 진행 중 에러");
             finishPaymentResults.add(appService.promotionProductsPayment(paymentResult));
         }
         for(UserRequest userRequest:userRequests){
