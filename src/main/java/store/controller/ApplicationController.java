@@ -38,7 +38,7 @@ public class ApplicationController {
         UserRequestClassifiedPromotionDTO userRequestClassifiedBasedPromotionDTO = appService.userRequestClassifiedBasedPromotion(userRequestsDTO);
         List<PaymentResult> paymentResults = promptPromotionalPayment(userRequestClassifiedBasedPromotionDTO.getEligibleRequests());
 
-        return nonPromotionProductsPayment(paymentResults, userRequestClassifiedBasedPromotionDTO.getIneligibleRequests());
+        return productsPayment(paymentResults, userRequestClassifiedBasedPromotionDTO.getIneligibleRequests());
     }
 
     public List<String[]> promptProductsNameQuantity() {
@@ -57,6 +57,7 @@ public class ApplicationController {
     public List<PaymentResult> promptPromotionalPayment(List<UserRequest> userRequests) {
         List<PaymentResult> paymentResults = new ArrayList<>();
         for (UserRequest userRequest : userRequests) {
+            System.out.println(userRequest.getProductName()+"-->1"+userRequest.getQuantity());
             ProductDetailsDTO productDetails = appService.productAllInfo(userRequest);
             if (userRequest.getQuantity() > productDetails.getQuantity()) {
                 paymentResults.add(processInsufficientStock(userRequest));
@@ -80,10 +81,11 @@ public class ApplicationController {
         }
     }
 
-    public List<PaymentResult> nonPromotionProductsPayment(List<PaymentResult> paymentResults, List<UserRequest> userRequests){
+    public List<PaymentResult> productsPayment(List<PaymentResult> paymentResults, List<UserRequest> userRequests){
         List<PaymentResult> finishPaymentResults = new ArrayList<>();
         for(PaymentResult paymentResult : paymentResults){
-            finishPaymentResults.add(appService.nonPromotionProductsPayment(paymentResult));
+            System.out.println("프로모션 진행 중 에러");
+            finishPaymentResults.add(appService.promotionProductsPayment(paymentResult));
         }
         for(UserRequest userRequest:userRequests){
             finishPaymentResults.add(appService.standardPayment(userRequest));
