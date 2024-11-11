@@ -128,6 +128,7 @@ public class ApplicationService {
         if (!answer) {
             paymentResult.reduceRequestQuantity();
             paymentResult.clearRemainQuantity();
+            paymentResult.clearNonPromotionNumber();
             return paymentResult;
         }
         paymentResult.addPayment(productAllInfo.getQuantity() * productAllInfo.getPrice(), productAllInfo.getQuantity());

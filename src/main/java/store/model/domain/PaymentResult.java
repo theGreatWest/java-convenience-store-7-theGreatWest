@@ -58,6 +58,10 @@ public class PaymentResult {
         this.remainQuantity -=quantity;
     }
 
+    public void clearNonPromotionNumber(){
+        this.nonPromotionNumber = 0;
+    }
+
     public void reduceRequestQuantity(){
         this.UserRequestQuantity -= this.remainQuantity;
     }
