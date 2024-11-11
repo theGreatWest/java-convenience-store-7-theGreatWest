@@ -83,7 +83,7 @@ public class ApplicationService {
     public boolean classifyUserRequests(UserRequest userRequest) {
         boolean result = false;
         for (Product product : dbService.searchProducts(userRequest.getProductName())) {
-            if (!product.getPromotion().equalsIgnoreCase(Constants.NULL) && (dbService.searchPromotion(product.getPromotion())!=null)) {
+            if (!product.getPromotion().equalsIgnoreCase(Constants.NULL) && (dbService.searchPromotion(product.getPromotion()) != null)) {
                 result = true;
                 break;
             }
@@ -132,13 +132,15 @@ public class ApplicationService {
         }
         paymentResult.addPayment(productAllInfo.getQuantity() * productAllInfo.getPrice(), productAllInfo.getQuantity());
         dbService.updateStock(productAllInfo.getName(), true, false, productAllInfo.getQuantity());
+
         return paymentResult;
     }
 
     public PaymentResult promotionProductsPayment(PaymentResult paymentResult) {
         Product product = dbService.searchProductApplicablePromotion(paymentResult.getUserRequestProductName());
-
-        dbService.updateStock(paymentResult.getUserRequestProductName(), true, false, paymentResult.getRemainQuantity());
+        boolean promotion = true;
+        if(product.getQuantity()==0){ promotion = false; }
+        dbService.updateStock(paymentResult.getUserRequestProductName(), promotion, false, paymentResult.getRemainQuantity());
         paymentResult.addPayment(paymentResult.getRemainQuantity() * product.getPrice(), paymentResult.getRemainQuantity());
 
         return paymentResult;
@@ -146,12 +148,14 @@ public class ApplicationService {
 
     public PaymentResult standardPayment(UserRequest userRequest) {
         Product product = dbService.searchProductNonPromotion(userRequest.getProductName());
-        boolean promotion = false;
-        if(dbService.hasPromotion(userRequest.getProductName()) != null) { promotion = true; }
-
+        int quantity = userRequest.getQuantity();
+        Product sampleProduct = dbService.hasPromotion(userRequest.getProductName());
+        if (sampleProduct != null && sampleProduct.getQuantity() != 0) {
+            if (quantity > sampleProduct.getQuantity()) { quantity -= sampleProduct.getQuantity(); }
+            dbService.updateStock(userRequest.getProductName(), true, false, sampleProduct.getQuantity());
+        }
         int price = userRequest.getQuantity() * product.getPrice();
-        dbService.updateStock(userRequest.getProductName(), promotion, false, userRequest.getQuantity());
-
+        dbService.updateStock(userRequest.getProductName(), false, false, quantity);
         return new PaymentResult(userRequest.getProductName(), product.getPrice(), userRequest.getQuantity(), price, 0, 0, 0, userRequest.getQuantity());
     }
 
@@ -162,7 +166,9 @@ public class ApplicationService {
             nonPromotionAmount += paymentResult.getNonPromotionNumber() * paymentResult.getProductPrice();
         }
         int membershipDiscount = nonPromotionAmount / 10 * 3;
-        if(membershipDiscount > totalPrice) { membershipDiscount = totalPrice; }
+        if (membershipDiscount > totalPrice) {
+            membershipDiscount = totalPrice;
+        }
         return Math.min(membershipDiscount, 8000);
     }
 
@@ -171,7 +177,7 @@ public class ApplicationService {
         for (PaymentResult paymentResult : paymentResults) {
             receipt.addItem(String.format(Constants.RECEIPT_FORMAT, paymentResult.getUserRequestProductName(), paymentResult.getUserRequestQuantity(), receipt.formatPriceWithComma(paymentResult.getUserRequestQuantity() * paymentResult.getProductPrice())));
             receipt.addTotalPrice(paymentResult.getTotalPrice());
-            receipt.addOriginalPrice(paymentResult.getUserRequestQuantity()*paymentResult.getProductPrice());
+            receipt.addOriginalPrice(paymentResult.getUserRequestQuantity() * paymentResult.getProductPrice());
             receipt.addPromotionDiscount(paymentResult.getPromotionDiscount());
             receipt.addPurchaseQuantity(paymentResult.getUserRequestQuantity());
         }
@@ -192,9 +198,9 @@ public class ApplicationService {
     private void getFinalReceipt(Receipt receipt, int membershipDiscount) {
         receipt.addItem(Constants.RECEIPT_GUID_LINE);
         receipt.addItem(String.format(Constants.RECEIPT_FORMAT_RESULT, Constants.TOTAL_PURCHASE_AMOUNT, receipt.getPurchaseQuantity(), receipt.formatPriceWithComma(receipt.getOriginalPrice())));
-        receipt.addItem(String.format(Constants.RECEIPT_FORMAT_RESULT, Constants.PROMOTION_DISCOUNT , Constants.BLANK, Constants.HYPHEN.strip() + receipt.formatPriceWithComma(receipt.getPromotionDiscount())));
-        receipt.addItem(String.format(Constants.RECEIPT_FORMAT_RESULT, Constants.MEMBERSHIP_DISCOUNT   ,Constants.BLANK, Constants.HYPHEN.strip() + receipt.formatPriceWithComma(membershipDiscount)));
-        receipt.addItem(String.format(Constants.RECEIPT_FORMAT_RESULT, Constants.FINAL_PAYMENT, Constants.BLANK, receipt.formatPriceWithComma(receipt.getTotalPrice()-membershipDiscount)));
+        receipt.addItem(String.format(Constants.RECEIPT_FORMAT_RESULT, Constants.PROMOTION_DISCOUNT, Constants.BLANK, Constants.HYPHEN.strip() + receipt.formatPriceWithComma(receipt.getPromotionDiscount())));
+        receipt.addItem(String.format(Constants.RECEIPT_FORMAT_RESULT, Constants.MEMBERSHIP_DISCOUNT, Constants.BLANK, Constants.HYPHEN.strip() + receipt.formatPriceWithComma(membershipDiscount)));
+        receipt.addItem(String.format(Constants.RECEIPT_FORMAT_RESULT, Constants.FINAL_PAYMENT, Constants.BLANK, receipt.formatPriceWithComma(receipt.getTotalPrice() - membershipDiscount)));
     }
 
 

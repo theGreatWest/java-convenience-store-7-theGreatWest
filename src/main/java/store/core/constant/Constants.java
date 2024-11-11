@@ -33,12 +33,12 @@ public class Constants {
     public static final String FREE_ITEM_GUIDE_YES_NO = "개를 무료로 더 받을 수 있습니다. 추가하시겠습니까? (Y/N)";
     public static final String PURCHASE_WITHOUT_DISCOUNT_YES_NO = "개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)";
 
-    public static final String RECEIPT_STORE_NAME = "===========W 편의점=============\n";
+    public static final String RECEIPT_STORE_NAME = "===========W 편의점===============\n";
     public static final String RECEIPT_HEAD = String.format("%-12s\t%-6s\t%-8s\n", "상품명","수량","금액");
     public static final String RECEIPT_FORMAT = "%-12s\t%-6d\t%-8s\n";
-    public static final String RECEIPT_FORMAT_RESULT = "%-12s\t%-6s\t%-8s\n";
-    public static final String RECEIPT_PRESENT = "===========증	정=============\n";
-    public static final String RECEIPT_GUID_LINE = "==============================\n";
+    public static final String RECEIPT_FORMAT_RESULT = "%-12s\t%-6s\t%8s\n";
+    public static final String RECEIPT_PRESENT = "===========증	정===============\n";
+    public static final String RECEIPT_GUID_LINE = "================================\n";
     public static final String TOTAL_PURCHASE_AMOUNT = "총구매액";
     public static final String PROMOTION_DISCOUNT = "행사할인";
     public static final String MEMBERSHIP_DISCOUNT = "멤버십할인";
