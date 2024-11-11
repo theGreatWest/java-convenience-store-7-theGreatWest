@@ -119,7 +119,7 @@ public class ApplicationService {
 
         dbService.updateStock(userRequest.getProductName(), true, false, userRequest.getQuantity());
 
-        return new PaymentResult(productInfo.getName(), productInfo.getPrice(), userRequest.getQuantity(), totalPrice, promotionDiscount, 0, applicableBundle * productInfo.getGiftNumber(), 0);
+        return new PaymentResult(productInfo.getName(), productInfo.getPrice(), userRequest.getQuantity(), totalPrice, promotionDiscount, 0, applicableBundle * productInfo.getGiftNumber(), userRequest.getQuantity()-applicableBundle*totalBuyGet);
     }
 
 
