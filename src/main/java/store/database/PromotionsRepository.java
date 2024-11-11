@@ -14,8 +14,8 @@ public class PromotionsRepository {
     public List<Promotion> readAllPromotions() {
         return promotions;
     }
-
-    public void removeExpiredPromotions(String promotionName){
-        promotions.removeIf(promotion -> promotion.getName().equalsIgnoreCase(promotionName));
-    }
+// 기간 만료된 프로모션 삭제
+//    public void removeExpiredPromotions(String promotionName){
+//        promotions.removeIf(promotion -> promotion.getName().equalsIgnoreCase(promotionName));
+//    }
 }

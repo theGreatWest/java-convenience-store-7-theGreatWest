@@ -90,7 +90,7 @@ public class ValidationServiceTest {
     void 공백_예외_테스트() {
         assertThatThrownBy(() -> validationService.isEmpty(Constants.BLANK))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining(ExceptionMessage.ERROR.getMessage());
+                .hasMessageContaining(ExceptionMessage.FORMAT_EXCEPTION.errorNotification());
     }
 
     @DisplayName("Y, Yes 는 대소문자 관계 없이 true 를 반환한다.")

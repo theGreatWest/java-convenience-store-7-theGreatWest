@@ -41,8 +41,8 @@ public class ValidationService {
     }
 
     public String isEmpty(String inputValue) {
-        if (inputValue.isEmpty()) {
-            throw new IllegalArgumentException(ExceptionMessage.OTHER_INPUT_EXCEPTION.errorNotification());
+        if (inputValue.isBlank()) {
+            throw new IllegalArgumentException(ExceptionMessage.FORMAT_EXCEPTION.errorNotification());
         }
         return inputValue;
     }

@@ -188,7 +188,7 @@ public class ApplicationService {
 
     private void getFinalReceipt(Receipt receipt, int membershipDiscount) {
         receipt.addItem(Constants.RECEIPT_GUID_LINE);
-        receipt.addItem(String.format(Constants.RECEIPT_FORMAT_RESULT, Constants.TOTAL_PURCHASE_AMOUNT, receipt.getPurchaseQuantity(), receipt.getOriginalPrice()));
+        receipt.addItem(String.format(Constants.RECEIPT_FORMAT_RESULT, Constants.TOTAL_PURCHASE_AMOUNT, receipt.getPurchaseQuantity(), receipt.formatPriceWithComma(receipt.getOriginalPrice())));
         receipt.addItem(String.format(Constants.RECEIPT_FORMAT_RESULT, Constants.PROMOTION_DISCOUNT , Constants.BLANK, Constants.HYPHEN.strip() + receipt.formatPriceWithComma(receipt.getPromotionDiscount())));
         receipt.addItem(String.format(Constants.RECEIPT_FORMAT_RESULT, Constants.MEMBERSHIP_DISCOUNT   ,Constants.BLANK, Constants.HYPHEN.strip() + receipt.formatPriceWithComma(membershipDiscount)));
         receipt.addItem(String.format(Constants.RECEIPT_FORMAT_RESULT, Constants.FINAL_PAYMENT, Constants.BLANK, receipt.formatPriceWithComma(receipt.getTotalPrice()-membershipDiscount)));
