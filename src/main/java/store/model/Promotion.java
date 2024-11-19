@@ -21,7 +21,15 @@ public class Promotion {
         return name;
     }
 
-    public boolean checkPromotionActive(){
+    public int getBuy() {
+        return buy;
+    }
+
+    public int getGet() {
+        return get;
+    }
+
+    public boolean checkPromotionActive() {
         return Date.checkActive(startDate, endDate);
     }
 }
