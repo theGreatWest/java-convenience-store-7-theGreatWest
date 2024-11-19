@@ -7,4 +7,8 @@ public class OutputView {
         System.out.println(Constant.WELCOME_MESSAGE + stockStatus + Constant.INPUT_PRODUCTS_NAME_QUANTITY);
     }
 
+    public void printExceptionMsg(String errorMsg){
+        System.out.println(errorMsg);
+    }
+
 }
