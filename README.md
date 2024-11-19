@@ -3,6 +3,12 @@
 ![편의점_결제_시스템.png](src/main/resources/image/flowChart.png)
 <hr>
 
+# ⚜️ 이전 버전과 달라진 점
+- **version_1**
+  <br>프로젝트 시작 시 파일 정보를 repository에 초기 저장한 후, DatabaseService가 Repository에 접근해 데이터 변경
+- **version_2**
+  <br>파일을 Database로 취급하여, DatabaseService가 products.md, promotions.md 파일에 직접 접근해 데이터 변경
+
 # ⚜️ 기능 개요 
 - 할인 혜택, 재고 상황에 대한 정보를 resources 폴더 하위의 products.md, promotions.md 파일에서 읽어와 DB에 저장
 - **상품 구매 및 결제 시스템**
