@@ -1,5 +1,6 @@
 package store.service;
 
+import store.core.constant.Constant;
 import store.core.constant.FileInfo;
 import store.model.Product;
 import store.model.Promotion;
@@ -12,7 +13,6 @@ public class DatabaseService {
     private final String PRODUCTS_FILE_NAME = "products.md";
     private final String PROMOTIONS_FILE_NAME = "promotions";
     private final String PRODUCTS_HEAD_LINE = "name,price,quantity,promotion";
-    private final String NULL = "null";
     private final int PROMOTION_IDX = 0;
     private final int NONPROMOTION_IDX = 1;
 
@@ -38,21 +38,45 @@ public class DatabaseService {
         return null;
     }
 
-    public Product readTargetProduct(String name, boolean promotionExist) throws IOException{
+    public Product readTargetProduct(String name, boolean promotionExist) throws IOException {
         List<Product> products = readAllProducts();
         int[] targetIndexes = findTargetProductIdx(products, name);
-        if(promotionExist){
-            return products.get(targetIndexes[PROMOTION_IDX]);
+        try {
+            if (promotionExist) {
+                return products.get(targetIndexes[PROMOTION_IDX]);
+            }
+            return products.get(targetIndexes[NONPROMOTION_IDX]);
+        } catch (IndexOutOfBoundsException e) {
+            return null;
         }
-        return products.get(targetIndexes[NONPROMOTION_IDX]);
     }
 
-    public Promotion readTargetPromotion(String name) throws IOException{
+    public Promotion readTargetPromotion(String name) throws IOException {
         List<Promotion> promotions = readAllPromotions();
-        for(Promotion promotion : promotions){
-            if(promotion.getName().equalsIgnoreCase(name)) return promotion;
+        for (Promotion promotion : promotions) {
+            if (promotion.getName().equalsIgnoreCase(name)) return promotion;
         }
         return null;
+    }
+
+    public int totalQuantity(String productName){
+        try{
+            return readTargetProduct(productName, false).getQuantity() + readTargetProduct(productName, true).getQuantity();
+        } catch (IOException e) {
+            return -1;
+        }
+    }
+
+    public List<String> readAllProductsName() {
+        try {
+            List<String> allProductsName = new ArrayList<>();
+            for (Product product : readAllProducts()) {
+                if (!allProductsName.contains(product.getName())) allProductsName.add(product.getName());
+            }
+            return allProductsName;
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     public void updateProductQuantity(String name, boolean operator, int changedQuantities) throws IOException {
@@ -72,7 +96,7 @@ public class DatabaseService {
         int[] targetIndexes = new int[]{-1, -1};
         for (int i = 0; i < products.size(); i++) {
             if (products.get(i).getName().equalsIgnoreCase(name)) {
-                if (!products.get(i).getPromotion().equals(NULL)) targetIndexes[PROMOTION_IDX] = i;
+                if (!products.get(i).getPromotion().equals(Constant.NULL)) targetIndexes[PROMOTION_IDX] = i;
                 else targetIndexes[NONPROMOTION_IDX] = i;
             }
         }
