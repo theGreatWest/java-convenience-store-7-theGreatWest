@@ -1,5 +1,7 @@
 package store.model;
 
+import store.core.constant.Constant;
+
 public class Product {
     private String name;
     private int price;
@@ -38,8 +40,32 @@ public class Product {
     }
 
     public String getFileLine() {
-        final String DELIMITER = ",";
+        return name + Constant.COMMA + price + Constant.COMMA + quantity + Constant.COMMA + promotion;
+    }
 
-        return name + DELIMITER + price + DELIMITER + quantity + DELIMITER + promotion;
+    public String getAnnounceMsg() {
+        String processedQuantity = quantity + Constant.GAE;
+        if (quantity == 0) processedQuantity = Constant.NO_STOCK;
+
+        String processdPromotion = promotion;
+        if (promotion.equals(Constant.NULL)) processdPromotion = "";
+
+        String processedPrice = priceWithComma();
+        if (processedPrice.charAt(0) == Constant.COMMA.charAt(0)) processedPrice = processedPrice.substring(1);
+
+        return Constant.HYPHEN + Constant.SPACE + name + Constant.SPACE + processedPrice + Constant.WON + Constant.SPACE + processedQuantity + Constant.SPACE + processdPromotion + Constant.NEW_LINE;
+    }
+
+    public String priceWithComma() {
+        StringBuilder result = new StringBuilder();
+        int cnt = 0;
+        for (char c : new StringBuilder(Integer.toString(price)).reverse().toString().toCharArray()) {
+            result.append(c);
+            if (++cnt % 3 == 0) {
+                cnt = 0;
+                result.append(Constant.COMMA);
+            }
+        }
+        return result.reverse().toString();
     }
 }
