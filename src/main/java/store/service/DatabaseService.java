@@ -1,112 +1,172 @@
 package store.service;
 
-import store.core.config.DatabaseInitializer;
-import store.core.constant.Constants;
-import store.database.ProductsRepository;
-import store.database.PromotionsRepository;
-import store.model.domain.Product;
-import store.model.domain.Promotion;
-import store.model.dto.ProductDetailsDTO;
+import store.core.constant.Constant;
+import store.core.constant.FileInfo;
+import store.model.AllInfo;
+import store.model.Product;
+import store.model.Promotion;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseService {
-    private final ProductsRepository productsRepository;
-    private final PromotionsRepository promotionsRepository;
+    private final String PRODUCTS_FILE_NAME = "products.md";
+    private final String PROMOTIONS_FILE_NAME = "promotions";
+    private final String PRODUCTS_HEAD_LINE = "name,price,quantity,promotion";
+    private final int PROMOTION_IDX = 0;
+    private final int NONPROMOTION_IDX = 1;
 
-    public DatabaseService(DatabaseInitializer dbInitializer) {
-        productsRepository = dbInitializer.setInitialProductsRepository();
-        promotionsRepository = dbInitializer.setInitialPromotionsRepository();
-    }
+    private Parser parser = new Parser();
 
-    public List<Product> readAllProducts() {
-        return productsRepository.readAllProducts();
-    }
+    public List<Product> readAllProducts() throws IOException {
+        String filePath = FileInfo.findFilePath(PRODUCTS_FILE_NAME);
+        if (filePath != null) {
+            BufferedReader reader = new BufferedReader(new FileReader(filePath));
 
-    public List<Promotion> readAllPromotions() {
-        return promotionsRepository.readAllPromotions();
-    }
-
-    public List<String> readAllProductsName(){
-        List<String> allProductsName = new ArrayList<>();
-        for(Product product : productsRepository.readAllProducts()){
-            allProductsName.add(product.getName());
-        }
-
-        return allProductsName;
-    }
-
-// 프로모션 정보를 최신으로 유지하는 기능
-//    public void updatePromotions(){
-//        for(Promotion promotion : promotionsRepository.readAllPromotions()){
-//            if(!promotion.isOngoingPromotion()){
-//                promotionsRepository.removeExpiredPromotions(promotion.getName());
-//            }
-//        }
-//    }
-
-    public Promotion searchPromotion(String promotionName){
-//        updatePromotions();
-
-        for(Promotion promotion : promotionsRepository.readAllPromotions()){
-            if(promotion.getName().equalsIgnoreCase(promotionName)){
-                return promotion;
-            }
+            return parser.productsInfo(reader);
         }
         return null;
     }
 
-    public List<Product> searchProducts(String productName){
-        List<Product> products = new ArrayList<>();
-        for(Product product : productsRepository.readAllProducts()){
-            if(product.getName().equalsIgnoreCase(productName)){
-                products.add(product);
-            }
-        }
-        return products;
-    }
+    public List<Promotion> readAllPromotions() throws IOException {
+        String filePath = FileInfo.findFilePath(PROMOTIONS_FILE_NAME);
+        if (filePath != null) {
+            BufferedReader reader = new BufferedReader(new FileReader(filePath));
 
-    public ProductDetailsDTO searchProductDetails(String productName){
-        Promotion promotion = searchPromotion(searchPromotionName((productName)));
-        Product product = searchProductApplicablePromotion(productName);
-
-        return new ProductDetailsDTO(product.getName(), product.getPrice(), product.getQuantity(),promotion.getName(), promotion.getPurchaseNumber(), promotion.getGiftNumber());
-    }
-
-    public Product searchProductApplicablePromotion(String productName){
-        for(Product product : productsRepository.readAllProducts()){
-            if(product.getName().equalsIgnoreCase(productName) && !product.getPromotion().equalsIgnoreCase(Constants.NULL)){
-                return product;
-            }
+            return parser.promotionsInfo(reader);
         }
         return null;
     }
 
-    public Product searchProductNonPromotion(String productName){
-        for(Product product : productsRepository.readAllProducts()){
-            if(product.getName().equalsIgnoreCase(productName) && product.getPromotion().equalsIgnoreCase(Constants.NULL)){
-                return product;
+    public Product readTargetProduct(String name, boolean promotionExist) {
+        try {
+            List<Product> products = readAllProducts();
+            int[] targetIndexes = findTargetProductIdx(products, name);
+            if (promotionExist) {
+                return products.get(targetIndexes[PROMOTION_IDX]);
             }
+            return products.get(targetIndexes[NONPROMOTION_IDX]);
+        } catch (IndexOutOfBoundsException | IOException e) {
+            return null;
+        }
+    }
+
+    public Promotion readTargetPromotion(String name) throws IOException {
+        List<Promotion> promotions = readAllPromotions();
+        for (Promotion promotion : promotions) {
+            if (promotion.getName().equalsIgnoreCase(name)) return promotion;
         }
         return null;
     }
 
-    public String searchPromotionName(String productName){
-        return searchProductApplicablePromotion(productName).getPromotion();
+    public AllInfo productAllInfo(String name) {
+        try {
+            Product product = readTargetProduct(name, true);
+            AllInfo allInfo = new AllInfo(product.getName(), product.getPrice(), product.getQuantity(), product.getPromotion());
+            allInfo.setPromotionDetails(readTargetPromotion(product.getPromotion()));
+
+            return allInfo;
+        } catch (IOException | NullPointerException e) {
+            return null;
+        }
     }
 
-    public void updateStock(String productName, boolean promotion, boolean operator, int quantity){
-        for(Product product : searchProducts(productName)){
-            if(promotion && !product.getPromotion().equalsIgnoreCase(Constants.NULL)){
-                productsRepository.updateStock(product, operator, quantity);
+    public int totalQuantity(String productName) {
+        Product nonPromotionProduct = readTargetProduct(productName, false);
+        Product promotionProduct = readTargetProduct(productName, true);
+        int nonPromotionQuantity = (nonPromotionProduct == null) ? 0 : nonPromotionProduct.getQuantity();
+        int promotionQuantity = (promotionProduct == null) ? 0 : promotionProduct.getQuantity();
+
+        return nonPromotionQuantity + promotionQuantity;
+    }
+
+    public List<String> readAllProductsName() {
+        try {
+            List<String> allProductsName = new ArrayList<>();
+            for (Product product : readAllProducts()) {
+                if (!allProductsName.contains(product.getName())) allProductsName.add(product.getName());
+            }
+            return allProductsName;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public void updateProductQuantity(String name, boolean operator, int changedQuantities) throws IOException {
+        List<Product> products = readAllProducts();
+        int[] targetIndexes = findTargetProductIdx(products, name);
+        updateProductQuantity(products, targetIndexes, operator, changedQuantities);
+
+        BufferedWriter writer = new BufferedWriter(new FileWriter(FileInfo.findFilePath(PRODUCTS_FILE_NAME)));
+        writer.write(PRODUCTS_HEAD_LINE + System.lineSeparator());
+        for (Product product : products) {
+            writer.write(product.getFileLine() + System.lineSeparator());
+        }
+        writer.close();
+    }
+
+    private int[] findTargetProductIdx(List<Product> products, String name) {
+        int[] targetIndexes = new int[]{-1, -1};
+        for (int i = 0; i < products.size(); i++) {
+            if (products.get(i).getName().equalsIgnoreCase(name)) {
+                if (!products.get(i).getPromotion().equals(Constant.NULL)) targetIndexes[PROMOTION_IDX] = i;
+                else targetIndexes[NONPROMOTION_IDX] = i;
+            }
+        }
+        return targetIndexes;
+    }
+
+    private void updateProductQuantity(List<Product> products, int[] targetIndexes, boolean operator, int changedQuantities) {
+        int beforeQuantity = 0;
+        if (targetIndexes[PROMOTION_IDX] != -1) {
+            beforeQuantity = products.get(targetIndexes[PROMOTION_IDX]).getQuantity();
+            if (beforeQuantity >= changedQuantities) {
+                products.get(targetIndexes[PROMOTION_IDX]).updateStock(operator, changedQuantities);
                 return;
             }
-            if(!promotion && product.getPromotion().equalsIgnoreCase(Constants.NULL)){
-                productsRepository.updateStock(product, operator, quantity);
-                return;
-            }
+            products.get(targetIndexes[PROMOTION_IDX]).updateStock(operator, beforeQuantity);
         }
+        products.get(targetIndexes[NONPROMOTION_IDX]).updateStock(operator, changedQuantities - beforeQuantity);
     }
 
+    private class Parser {
+        private final String DELIMITER = ",";
+
+        public List<Product> productsInfo(BufferedReader reader) throws IOException {
+            List<Product> fileInfo = new ArrayList<>();
+            String headLine = reader.readLine();
+            while (true) {
+                String line = reader.readLine();
+                if (line == null) break;
+                fileInfo.add(createProductObj(line));
+            }
+            reader.close();
+            return fileInfo;
+        }
+
+        public List<Promotion> promotionsInfo(BufferedReader reader) throws IOException {
+            List<Promotion> fileInfo = new ArrayList<>();
+            String headLine = reader.readLine();
+            while (true) {
+                String line = reader.readLine();
+                if (line == null) break;
+                fileInfo.add(createPromotionObj(line));
+            }
+            reader.close();
+            return fileInfo;
+        }
+
+        private Product createProductObj(String line) {
+            String[] info = line.split(DELIMITER);
+
+            return new Product(info[0], Integer.parseInt(info[1]), Integer.parseInt(info[2]), info[3]);
+        }
+
+        private Promotion createPromotionObj(String line) {
+            String[] info = line.split(DELIMITER);
+
+            return new Promotion(info[0], Integer.parseInt(info[1]), Integer.parseInt(info[2]), info[3], info[4]);
+        }
+    }
 }

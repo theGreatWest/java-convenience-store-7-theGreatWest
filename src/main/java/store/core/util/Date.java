@@ -3,47 +3,38 @@ package store.core.util;
 import camp.nextstep.edu.missionutils.DateTimes;
 
 public class Date {
-    public static final int FIRST_ELEMENT = 0;
-    public static final int SECOND_ELEMENT = 1;
-    public static final int THIRD_ELEMENT = 2;
-    public static final String DELIMITER = "-";
-    public static final String DATE_TIME_SEPARATOR = "T";
+    private static final String DELIMITER_T = "T";
+    private static final String DELIMITER_HYPHEN = "-";
+    private static final int YEAR = 0;
+    private static final int MONTH = 1;
+    private static final int Date = 2;
 
-    public static boolean isDateInRange(String startDate, String endDate) {
-        String[] startDateComponents = dateSplitter(startDate);
-        String[] todayDateComponents = dateSplitter(todayDate());
-        String[] endDateComponents = dateSplitter(endDate);
+    public static boolean checkActive(String start, String end) {
+        String[] startDate = start.strip().split(DELIMITER_HYPHEN);
+        String[] today = DateTimes.now().toString().split(DELIMITER_T)[0].split(DELIMITER_HYPHEN);
+        String[] endDate = end.strip().split(DELIMITER_HYPHEN);
 
-        return (yearInRange(startDateComponents[FIRST_ELEMENT], todayDateComponents[FIRST_ELEMENT], endDateComponents[FIRST_ELEMENT])
-                && monthInRange(startDateComponents[SECOND_ELEMENT], todayDateComponents[SECOND_ELEMENT], endDateComponents[SECOND_ELEMENT])
-                && dateInRange(startDateComponents[THIRD_ELEMENT], todayDateComponents[THIRD_ELEMENT], endDateComponents[THIRD_ELEMENT]));
+        if (isBetweenYear(Integer.parseInt(startDate[YEAR]), Integer.parseInt(today[YEAR]), Integer.parseInt(endDate[YEAR]))) {
+            if (isBetweenMonth(Integer.parseInt(startDate[MONTH]), Integer.parseInt(today[MONTH]), Integer.parseInt(endDate[MONTH]), Integer.parseInt(startDate[Date]), Integer.parseInt(today[Date]), Integer.parseInt(endDate[Date]))) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public static String todayDate() {
-        String todayDate = String.valueOf(DateTimes.now());
-
-        return todayDate.split(DATE_TIME_SEPARATOR)[FIRST_ELEMENT];
+    private static boolean isBetweenYear(int start, int today, int end) {
+        return today >= start && today <= end;
     }
 
-    private static String[] dateSplitter(String date) {
-        return date.split(DELIMITER);
+    private static boolean isBetweenMonth(int startMonth, int todayMonth, int endMonth, int startDate, int todayDate, int endDate) {
+        if (todayMonth == startMonth && todayMonth == endMonth) return isBetweenDate(startDate, todayDate, endDate);
+        if (todayMonth == startMonth && todayMonth < endMonth) return isBetweenDate(startDate, todayDate, todayDate);
+        if (todayMonth > startMonth && todayMonth == endMonth) return isBetweenDate(todayDate, todayDate, endDate);
+
+        return todayMonth >= startMonth && todayMonth <= endMonth;
     }
 
-    private static boolean yearInRange(String startYear, String todayYear, String endYear) {
-        int today = Integer.parseInt(todayYear);
-
-        return today >= Integer.parseInt(startYear) && today <= Integer.parseInt(endYear);
-    }
-
-    private static boolean monthInRange(String startMonth, String todayMonth, String endMonth) {
-        int today = Integer.parseInt(todayMonth);
-
-        return today >= Integer.parseInt(startMonth) && today <= Integer.parseInt(endMonth);
-    }
-
-    private static boolean dateInRange(String startDate, String todayDate, String endDate) {
-        int today = Integer.parseInt(todayDate);
-
-        return today >= Integer.parseInt(startDate) && today <= Integer.parseInt(endDate);
+    private static boolean isBetweenDate(int start, int today, int end) {
+        return today >= start && today <= end;
     }
 }

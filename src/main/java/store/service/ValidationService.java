@@ -1,136 +1,44 @@
 package store.service;
 
-import store.core.constant.Constants;
+import store.core.constant.Constant;
 import store.core.constant.ExceptionMessage;
-import store.model.domain.Product;
+import store.model.UserRequest;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ValidationService {
-    private List<Product> allProducts;
-    private List<String> allProductsName;
-
-    public ValidationService() {
-    }
-
-    public ValidationService(List<Product> allProducts, List<String> allProductsName) {
-        this.allProducts = allProducts;
-        this.allProductsName = allProductsName;
-    }
-
-    public String[] startProductValidation(String productNameQuantity) {
+    public String[] validateRequestProduct(String requestProduct, List<String> allProductsName) {
         try {
-            String[] parsedProductNameQuantity = isEnclosedBrackets(productNameQuantity).split(Constants.HYPHEN.strip());
+            String[] request = checkFormat(requestProduct.strip());
+            checkExistProduct(request, allProductsName);
 
-            return isValidProductNameQuantity(parsedProductNameQuantity);
+            return request;
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(e.getMessage());
         }
     }
 
-    public boolean startYesNoValidation(String inputValue) {
-        try {
-            isEmpty(inputValue);
-            isNotYesNo(inputValue);
-
-            return convertAnswer(inputValue);
-        } catch (RuntimeException e) {
-            throw new IllegalArgumentException(ExceptionMessage.FORMAT_EXCEPTION.errorNotification());
-        }
-    }
-
-    public String isEmpty(String inputValue) {
-        if (inputValue.isBlank()) {
-            throw new IllegalArgumentException(ExceptionMessage.FORMAT_EXCEPTION.errorNotification());
-        }
-        return inputValue;
-    }
-
-    private String isEnclosedBrackets(String productNameQuantity) {
-        productNameQuantity = productNameQuantity.strip();
-        if (!(productNameQuantity.startsWith("[") && productNameQuantity.endsWith("]"))) {
-            throw new IllegalArgumentException(ExceptionMessage.FORMAT_EXCEPTION.errorNotification());
-        }
-        return productNameQuantity.substring(1, productNameQuantity.length() - 1);
-    }
-
-    private String[] isValidProductNameQuantity(String[] parsedProductNameQuantity) {
-        try {
-            isValidInputCount(parsedProductNameQuantity.length);
-            String productQuantity = isValidQuantity(parsedProductNameQuantity[Constants.PRODUCT_QUANTITY_INDEX].strip());
-            String productName = isProductExist(parsedProductNameQuantity[Constants.PRODUCT_NAME_INDEX].strip());
-
-            return isUserRequestQuantityAvailable(productName, productQuantity);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(e.getMessage());
-        }
-    }
-
-    private void isValidInputCount(int userInputProductQuantityLength) {
-        if (userInputProductQuantityLength != 2) {
-            throw new IllegalArgumentException(ExceptionMessage.FORMAT_EXCEPTION.errorNotification());
-        }
-    }
-
-    private String isProductExist(String userInputProduct) {
-        if (!allProductsName.contains(userInputProduct)) {
-            throw new IllegalArgumentException(ExceptionMessage.NON_EXISTENT_EXCEPTION.errorNotification());
-        }
-
-        return userInputProduct;
-    }
-
-    private String isValidQuantity(String userInputQuantity) {
-        try {
-            Integer.parseInt(userInputQuantity);
-
-            return userInputQuantity;
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(ExceptionMessage.FORMAT_EXCEPTION.errorNotification());
-        }
-    }
-
-
-    private String[] isUserRequestQuantityAvailable(String userInputProductName, String userInputProductQuantity) {
-        List<Product> userRequestProducts = searchProducts(userInputProductName);
-        try {
-            isStockAvailable(userRequestProducts, Integer.parseInt(userInputProductQuantity));
-
-            return new String[]{userInputProductName, userInputProductQuantity};
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(e.getMessage());
-        }
-    }
-
-    private List<Product> searchProducts(String productName) {
-        List<Product> products = new ArrayList<>();
-        for (Product product : allProducts) {
-            if (product.getName().equalsIgnoreCase(productName)) {
-                products.add(product);
+    public String[] checkFormat(String requestProduct) {
+        if (requestProduct.charAt(0) == Constant.OPENING_BRACKET && requestProduct.charAt(requestProduct.length() - 1) == Constant.CLOSING_BRACKET) {
+            String[] checkedFormat = requestProduct.substring(1, requestProduct.length() - 1).split(Constant.HYPHEN);
+            if (checkedFormat[0].matches(Constant.REGEX_ALPHA_NUMERIC) && checkedFormat[1].matches(Constant.REGEX_NUMERIC)) {
+                return checkedFormat;
             }
         }
-        return products;
+        throw new IllegalArgumentException(ExceptionMessage.INVALID_PRODUCT_NANE_QUANTITY_FORMAT.fullErrorMessage());
     }
 
-    private void isStockAvailable(List<Product> products, int userRequestQuantity) {
-        int stock = 0;
-        for (Product product : products) {
-            stock += product.getQuantity();
-        }
-
-        if (userRequestQuantity > stock) {
-            throw new IllegalArgumentException(ExceptionMessage.EXCESS_QUANTITY_EXCEPTION.errorNotification());
+    public void checkExistProduct(String[] request, List<String> allProductsName) {
+        if (!allProductsName.contains(request[0])) {
+            throw new IllegalArgumentException(ExceptionMessage.NON_EXISTENT_PRODUCT.fullErrorMessage());
         }
     }
 
-    private void isNotYesNo(String answer) {
-        if (!(answer.equalsIgnoreCase("Y") || answer.equalsIgnoreCase("N"))) {
-            throw new RuntimeException();
+    public UserRequest checkStock(int totalQuantity, String[] request) {
+        int requestQuantity = Integer.parseInt(request[1]);
+        if (totalQuantity == -1 || requestQuantity > totalQuantity) {
+            throw new IllegalArgumentException(ExceptionMessage.EXCEED_STOCK_QUANTITY.fullErrorMessage());
         }
-    }
-
-    private boolean convertAnswer(String answer) {
-        return answer.equalsIgnoreCase("Y");
+        return new UserRequest(requestQuantity, request[0]);
     }
 }

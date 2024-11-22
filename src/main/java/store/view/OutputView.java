@@ -1,40 +1,34 @@
 package store.view;
 
-import store.core.constant.Constants;
+import store.core.constant.Constant;
 
 public class OutputView {
-    public void printProducts(String allProducts) {
-        System.out.print(
-                Constants.WELCOME_MESSAGE + allProducts
-        );
+    public void printWelcomeStockStatus(String stockStatus) {
+        System.out.println(Constant.WELCOME_MESSAGE + stockStatus + Constant.INPUT_PRODUCTS_NAME_QUANTITY);
     }
 
-    public void productNameQuantityPrompt() {
-        System.out.println(Constants.NEW_LINE + Constants.PURCHASE_PRODUCTS_QUANTITY);
+    public void printAskAdditionFreeProduct(String productName, int get) {
+        System.out.println(Constant.CURRENT + Constant.SPACE + productName + Constant.EUN_NEUN + Constant.SPACE + get + Constant.INPUT_ASK_ADDITION_FREE_PRODUCT);
     }
 
-    public void membershipPrompt() {
-        System.out.println(Constants.NEW_LINE + Constants.MEMBERSHIP_DISCOUNT_YES_NO);
+    public void printAskRegularPayment(String productName, int regularQuantity) {
+        System.out.println(Constant.CURRENT + Constant.SPACE + productName + Constant.SPACE + regularQuantity + Constant.INPUT_ASK_REGULAR_PAYMENT);
     }
 
-    public void inquireAnotherProductsPrompt(){
-        System.out.println(Constants.NEW_LINE + Constants.ADDITIONAL_PURCHASE_STATUS_YES_NO);
-    }
-
-
-    public void printExceptionMessage(String exceptionMessage) {
-        System.out.println(exceptionMessage);
-    }
-
-    public void printConfirmNonDiscountProductsPrompt(String productName, int insufficientQuantity){
-        System.out.println(Constants.NEW_LINE + Constants.CURRENT + productName+Constants.SPACE+insufficientQuantity+Constants.PURCHASE_WITHOUT_DISCOUNT_YES_NO);
-    }
-
-    public void printConfirmAddProductPromotionPrompt(String productName, int additionalQuantity){
-        System.out.println(Constants.NEW_LINE + Constants.CURRENT + productName+Constants.SUBJECT_MARKER+additionalQuantity+Constants.FREE_ITEM_GUIDE_YES_NO);
+    public void printAskMembership() {
+        System.out.println(Constant.INPUT_ASK_MEMBERSHIP);
     }
 
     public void printReceipt(String receipt) {
-        System.out.println(Constants.NEW_LINE + receipt);
+        System.out.println(receipt);
     }
+
+    public void printAskContinue() {
+        System.out.println(Constant.INPUT_ASK_CONTINUE);
+    }
+
+    public void printExceptionMsg(String errorMsg) {
+        System.out.println(errorMsg);
+    }
+
 }
