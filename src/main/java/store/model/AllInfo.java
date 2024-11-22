@@ -2,7 +2,7 @@ package store.model;
 
 import store.core.constant.Constant;
 
-public class PromotionProductInfo {
+public class AllInfo {
     private String name;
     private int price;
     private int quantity;
@@ -12,7 +12,7 @@ public class PromotionProductInfo {
     private int get = -1;
     private boolean active = false;
 
-    public PromotionProductInfo(String name, int price, int quantity, String promotion) {
+    public AllInfo(String name, int price, int quantity, String promotion) {
         this.name = name;
         this.price = price;
         this.quantity = quantity;
@@ -25,5 +25,33 @@ public class PromotionProductInfo {
             this.get = promotionInfo.getGet();
             this.active = promotionInfo.checkPromotionActive();
         }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public String getPromotion() {
+        return promotion;
+    }
+
+    public int getBuy() {
+        return buy;
+    }
+
+    public int getGet() {
+        return get;
+    }
+
+    public boolean isActive() {
+        return active;
     }
 }

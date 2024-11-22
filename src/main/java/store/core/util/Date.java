@@ -10,9 +10,9 @@ public class Date {
     private static final int Date = 2;
 
     public static boolean checkActive(String start, String end) {
-        String[] startDate = start.split(DELIMITER_HYPHEN);
+        String[] startDate = start.strip().split(DELIMITER_HYPHEN);
         String[] today = DateTimes.now().toString().split(DELIMITER_T)[0].split(DELIMITER_HYPHEN);
-        String[] endDate = end.split(DELIMITER_HYPHEN);
+        String[] endDate = end.strip().split(DELIMITER_HYPHEN);
 
         if (isBetweenYear(Integer.parseInt(startDate[YEAR]), Integer.parseInt(today[YEAR]), Integer.parseInt(endDate[YEAR]))) {
             if (isBetweenMonth(Integer.parseInt(startDate[MONTH]), Integer.parseInt(today[MONTH]), Integer.parseInt(endDate[MONTH]), Integer.parseInt(startDate[Date]), Integer.parseInt(today[Date]), Integer.parseInt(endDate[Date]))) {

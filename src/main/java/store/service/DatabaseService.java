@@ -2,6 +2,7 @@ package store.service;
 
 import store.core.constant.Constant;
 import store.core.constant.FileInfo;
+import store.model.AllInfo;
 import store.model.Product;
 import store.model.Promotion;
 
@@ -38,15 +39,15 @@ public class DatabaseService {
         return null;
     }
 
-    public Product readTargetProduct(String name, boolean promotionExist) throws IOException {
-        List<Product> products = readAllProducts();
-        int[] targetIndexes = findTargetProductIdx(products, name);
+    public Product readTargetProduct(String name, boolean promotionExist) {
         try {
+            List<Product> products = readAllProducts();
+            int[] targetIndexes = findTargetProductIdx(products, name);
             if (promotionExist) {
                 return products.get(targetIndexes[PROMOTION_IDX]);
             }
             return products.get(targetIndexes[NONPROMOTION_IDX]);
-        } catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException | IOException e) {
             return null;
         }
     }
@@ -59,12 +60,25 @@ public class DatabaseService {
         return null;
     }
 
-    public int totalQuantity(String productName){
-        try{
-            return readTargetProduct(productName, false).getQuantity() + readTargetProduct(productName, true).getQuantity();
-        } catch (IOException e) {
-            return -1;
+    public AllInfo productAllInfo(String name) {
+        try {
+            Product product = readTargetProduct(name, true);
+            AllInfo allInfo = new AllInfo(product.getName(), product.getPrice(), product.getQuantity(), product.getPromotion());
+            allInfo.setPromotionDetails(readTargetPromotion(product.getPromotion()));
+
+            return allInfo;
+        } catch (IOException | NullPointerException e) {
+            return null;
         }
+    }
+
+    public int totalQuantity(String productName) {
+        Product nonPromotionProduct = readTargetProduct(productName, false);
+        Product promotionProduct = readTargetProduct(productName, true);
+        int nonPromotionQuantity = (nonPromotionProduct == null) ? 0 : nonPromotionProduct.getQuantity();
+        int promotionQuantity = (promotionProduct == null) ? 0 : promotionProduct.getQuantity();
+
+        return nonPromotionQuantity + promotionQuantity;
     }
 
     public List<String> readAllProductsName() {

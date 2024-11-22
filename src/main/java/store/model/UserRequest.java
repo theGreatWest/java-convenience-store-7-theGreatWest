@@ -1,5 +1,7 @@
 package store.model;
 
+import store.core.constant.Constant;
+
 public class UserRequest {
     private final String name;
     private int quantity;
@@ -17,8 +19,16 @@ public class UserRequest {
         quantity -= changedQuantity;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
     @Override
     public String toString() {
-        return "name: " + name + " | quantity: " + quantity;
+        return name + Constant.COMMA + Constant.SPACE + quantity;
     }
 }

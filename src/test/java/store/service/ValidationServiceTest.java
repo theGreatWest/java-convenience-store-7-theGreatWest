@@ -78,6 +78,6 @@ public class ValidationServiceTest {
     void 재고_확인_테스트(String requestQuantity) {
         String[] request = new String[]{"Test", requestQuantity};
         UserRequest userRequest = validationService.checkStock(13, request);
-        assertThat(userRequest.toString()).isEqualTo("name: Test | quantity: " + requestQuantity);
+        assertThat(userRequest.toString()).isEqualTo("Test, " + requestQuantity);
     }
 }
