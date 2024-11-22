@@ -21,9 +21,11 @@ public class AppController {
     public void run(){
         while(true){
             List<UserRequest> userRequests = promptInputProducts();
-            List<Receipt> receipts = promptPayment(userRequests);
-            String receipt = appService.createFinalReceipt(receipts, promptMembership());
-            outputView.printReceipt(receipt);
+            if(userRequests!=null){
+                List<Receipt> receipts = promptPayment(userRequests);
+                String receipt = appService.createFinalReceipt(receipts, promptMembership());
+                outputView.printReceipt(receipt);
+            }else promptMembership();
             if(!promptAskContinue()) break;
         }
     }
